@@ -5,8 +5,8 @@ import seaborn as sns
 import random
 
 
-def weighted_age_dict(user_file_name):
-    users_df_copy = pd.read_csv(user_file_name)
+def weighted_age_dict(user_file):
+    users_df_copy = pd.read_csv(user_file)
     users_df_copy.dropna(subset=["User-Age"], inplace=True)
 
     users_df_copy["User-Age"] = pd.to_numeric(
@@ -117,7 +117,7 @@ def imputation(age_group_percentages_dict, users_df):
     return users_df
 
 
-def discretising(users_df, rating_df):
+def discretising(users_df, rating_df, books_df):
     # Define the bins of
     bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
@@ -150,6 +150,7 @@ def discretising(users_df, rating_df):
 
     # Merge user infomations and rating informations
     merged_df = pd.merge(users_df, rating_df, on="User-ID", how="inner")
+    merged_df = pd.merge(merged_df, books_df, on="ISBN", how="inner")
 
     return merged_df
 
