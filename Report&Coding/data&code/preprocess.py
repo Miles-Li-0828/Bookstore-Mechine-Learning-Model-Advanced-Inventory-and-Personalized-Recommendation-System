@@ -5,8 +5,8 @@ import seaborn as sns
 import random
 
 
-def weighted_age_dict():
-    users_df_copy = pd.read_csv("BX-Users.csv")
+def weighted_age_dict(user_file_name):
+    users_df_copy = pd.read_csv(user_file_name)
     users_df_copy.dropna(subset=["User-Age"], inplace=True)
 
     users_df_copy["User-Age"] = pd.to_numeric(
