@@ -47,7 +47,7 @@ def weighted_age_dict(user_file):
     return age_group_percentages_dict
 
 
-def imputation(age_group_percentages_dict, users_df):
+def ages_imputation(age_group_percentages_dict, users_df):
     """Handle the missing data of users' ages"""
     random_filled_ages = list(age_group_percentages_dict.keys())
     total_percentage = sum(age_group_percentages_dict.values())
@@ -91,10 +91,15 @@ def imputation(age_group_percentages_dict, users_df):
     # Iterate over the fill_age dictionary and update the DataFrame
     for idx, age in fill_age.items():
         users_df.loc[idx, "User-Age"] = age
+    return users_df
 
-    """Handle the missing data of countries"""
+
+def country_imputation(users_df):
     # List all the countries in the data
     country_list = list(users_df["User-Country"].dropna().unique())
+
+    # List row indexes where User-Country is "n/a"
+    na_indexes = list(users_df[users_df["User-Country"].str.strip() == 'n/a"'].index)
 
     # List row indexes where User-Country is null
     nan_indexes = list(
@@ -102,19 +107,72 @@ def imputation(age_group_percentages_dict, users_df):
     )
 
     # Count total number of rows with null
-    count_nan = len(nan_indexes)
+    count_nan = len(nan_indexes) + len(na_indexes)
 
     # Generate random countries for all null rows
     random.seed(42)
     random_countries = [random.choice(country_list) for _ in range(count_nan)]
 
     fill_country = {
-        idx: countries for idx, countries in zip(nan_indexes, random_countries)
+        idx: countries
+        for idx, countries in zip(nan_indexes + na_indexes, random_countries)
     }
 
-    # Fill gaps in User-Country column
-    users_df["User-Country"] = users_df["User-Country"].fillna(fill_country)
+    # Iterate over the fill_states dictionary and update the DataFrame
+    for idx, country in fill_country.items():
+        users_df.loc[idx, "User-Country"] = country
     return users_df
+
+
+def city_imputation(users_df):
+    # List all the cities in the data
+    city_list = list(users_df["User-City"].dropna().unique())
+
+    # List row indexes where User-City is null
+    nan_indexes = list(users_df["User-City"][users_df["User-City"].isnull()].index)
+
+    # Count total number of rows with null
+    count_nan = len(nan_indexes)
+
+    # Generate random cities for all null rows
+    random.seed(42)
+    random_cities = [random.choice(city_list) for _ in range(count_nan)]
+
+    fill_city = {idx: cities for idx, cities in zip(nan_indexes, random_cities)}
+
+    # Fill gaps in User-City column
+    users_df["User-City"] = users_df["User-City"].fillna(fill_city)
+    return users_df
+
+
+def state_imputation(users_df):
+    # List all the states in the data
+    state_list = list(users_df["User-State"].dropna().unique())
+
+    # List row indexes where User-State is "n/a"
+    na_indexes = users_df[
+        (users_df["User-State"].str.strip() == "n/a")
+        | (users_df["User-State"].str.strip() == "")
+    ].index
+
+    # Count total number of rows with null
+    count_na = len(na_indexes)
+
+    # Generate random states for all null rows
+    random.seed(42)
+    random_states = [random.choice(state_list) for _ in range(count_na)]
+
+    fill_states = {idx: states for idx, states in zip(na_indexes, random_states)}
+
+    # Iterate over the fill_states dictionary and update the DataFrame
+    for idx, state in fill_states.items():
+        users_df.loc[idx, "User-State"] = state
+    return users_df
+
+
+def author_imputation(df):
+    df["Book-Author"].fillna("NO AUTHOR", inplace=True)
+    return df
 
 
 def discretising(users_df, rating_df, books_df):
@@ -147,13 +205,17 @@ def discretising(users_df, rating_df, books_df):
     plt.ylabel("Frequency")
     plt.grid(True)
     plt.savefig("DistributionOfAgeGroups.png")
-
-    # Merge user infomations and rating informations
-    merged_df = pd.merge(users_df, rating_df, on="User-ID", how="inner")
-    merged_df = pd.merge(merged_df, books_df, on="ISBN", how="inner")
-
-    return merged_df
+    return users_df
 
 
 def text_process(merged_df):
-    return
+    str_cols = [
+        "User-City",
+        "User-State",
+        "User-Country",
+        "Book-Title",
+        "Book-Author",
+        "Book-Publisher",
+    ]
+    merged_df[str_cols] = merged_df[str_cols].apply(lambda x: x.str.upper())
+    return merged_df
