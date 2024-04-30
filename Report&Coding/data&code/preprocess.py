@@ -208,7 +208,19 @@ def discretising(users_df, rating_df, books_df):
     plt.ylabel("Frequency")
     plt.grid(True)
     plt.savefig("DistributionOfAgeGroups.png")
-    return users_df
+
+    merged_df = pd.merge(users_df, rating_df, on="User-ID", how="inner")
+    merged_df = pd.merge(merged_df, books_df, on="ISBN", how="inner")
+
+    # Discretise the data for rating into low, medium and high
+    merged_df["Book-Rating"] = merged_df["Book-Rating"].astype(int)
+    rate_bins = [0, 4, 7, 11]
+    rate_labels = ["low", "medium", "high"]
+    merged_df["Rating_Category"] = pd.cut(
+        merged_df["Book-Rating"], bins=rate_bins, labels=rate_labels, right=False
+    )
+
+    return merged_df
 
 
 def text_process(merged_df):
@@ -267,46 +279,56 @@ def text_process(merged_df):
         "Book-Author",
         "Book-Publisher",
     ]
-    merged_df[str_cols] = merged_df[str_cols].apply(lambda x: x.str.upper())
+    merged_df[str_cols] = merged_df[str_cols].apply(lambda x: x.str.lower())
     return merged_df
 
 
-def create_tfidf_df(merged_df):
-    str_cols = [
-        "User-City",
-        "User-State",
-        "User-Country",
-        "Age-Group",
-        "Book-Title",
-        "Book-Author",
-        "Book-Publisher",
-    ]
+def compute_probability(col):
+    """
+    Compute the probability of a certain event
+    """
+    return col.value_counts() / col.shape[0]
 
-    # New dataFrame for text colums
-    tfidf_df = pd.DataFrame()
-    for col in str_cols:
-        # Create vertiliser
-        vectorizer = TfidfVectorizer()
 
-        # Get TF-IDF features of strings
-        tfidf_matrix = vectorizer.fit_transform(merged_df[col])
+def compute_entropy(col):
+    """
+    Compute the entropy of a certain event
+    """
+    entropy = 0
+    probabilities = compute_probability(col)
+    for prob in probabilities:
+        if prob == 0:
+            term = 0
+        else:
+            term = -prob * np.log2(prob)
+        entropy += term
+    return entropy
 
-        # get the features' names
-        feature_names = vectorizer.get_feature_names_out()
 
-        # Put tf-idf into the data frame
-        col_tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)
+def compute_conditional_entropy(x, y):
+    """
+    Compute the conditional entropy between two random variables.
+    Specifically, the conditional entropy of Y given X.
+    """
+    probability_x = compute_probability(x)
 
-        # Put tf-idf info into dataFrame
-        tfidf_df = pd.concat([tfidf_df, col_tfidf_df], axis=1)
+    temp_df = pd.DataFrame({"X": x, "Y": y})
 
-        numerical_df = pd.DataFrame()
+    conditional_entropy = 0
 
-    # Merge the numerical columns of
-    for col in merged_df:
-        if col not in str_cols:
-            numerical_df[col] = merged_df[col]
+    # for unique event x_i
+    for x_i in x.unique():
+        # get the data for Y given X=x_i
+        y_given_x = temp_df.loc[temp_df["X"] == x_i, "Y"]
 
-    tfidf_merged_df = pd.concat(numerical_df, tfidf_df)
+        # compute the conditional entropy
+        conditional_entropy += probability_x[x_i] * compute_entropy(y_given_x)
 
-    return tfidf_merged_df
+    return conditional_entropy
+
+
+def compute_information_gain(x, y):
+    """
+    Compute the information gain between an attribute and class label
+    """
+    return compute_entropy(y) - compute_conditional_entropy(x, y)
