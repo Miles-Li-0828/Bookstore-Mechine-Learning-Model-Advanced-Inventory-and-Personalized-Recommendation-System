@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import random
+import pycountry
+import re
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def weighted_age_dict(user_file):
@@ -209,6 +212,53 @@ def discretising(users_df, rating_df, books_df):
 
 
 def text_process(merged_df):
+    countries = merged_df["User-Country"]
+    countries_upper = countries.str.upper()
+    country_mapping = {
+        "U.S.A.": "UNITED STATES",
+        "U.S.A": "UNITED STATES",
+        "USA": "UNITED STATES",
+        "U.S. OF A.": "UNITED STATES",
+        "U.S.A>": "UNITED STATES",
+        "U.S>": "UNITED STATES",
+        "AMERICA": "UNITED STATES",
+        "UNITED STATE": "UNITED STATES",
+        "UNITED STATES OF AMERICA": "UNITED STATES",
+        "ENGLAND": "UNITED KINGDOM",
+        "U.K.": "UNITED KINGDOM",
+        "UNITED KINGDOMN": "UNITED KINGDOM",
+        "WALES": "UNITED KINGDOM",
+        "SCOTLAND": "UNITED KINGDOM",
+        "GREAT BRITAIN": "UNITED KINGDOM",
+    }
+
+    countries_cleaned = np.char.strip(
+        np.char.replace(countries_upper.values.astype(str), '"', "")
+    )
+    countries_cleaned = np.array(
+        [country_mapping.get(country, country) for country in countries_cleaned]
+    )
+
+    # filter out words that are not country, randomly replace them with countries that are already existed
+    known_countries = set(country.name.upper() for country in pycountry.countries)
+
+    # Preprocess countries_cleaned to remove non-country values
+    valid_countries_cleaned = [
+        country for country in countries_cleaned if country in known_countries
+    ]
+
+    # Replace non-country values with a random choice from valid_countries_cleaned
+    filtered_countries = [
+        (
+            country
+            if country in known_countries
+            else random.choice(valid_countries_cleaned)
+        )
+        for country in countries_cleaned
+    ]
+
+    merged_df["User-Country"] = filtered_countries
+
     str_cols = [
         "User-City",
         "User-State",
@@ -219,3 +269,44 @@ def text_process(merged_df):
     ]
     merged_df[str_cols] = merged_df[str_cols].apply(lambda x: x.str.upper())
     return merged_df
+
+
+def create_tfidf_df(merged_df):
+    str_cols = [
+        "User-City",
+        "User-State",
+        "User-Country",
+        "Age-Group",
+        "Book-Title",
+        "Book-Author",
+        "Book-Publisher",
+    ]
+
+    # New dataFrame for text colums
+    tfidf_df = pd.DataFrame()
+    for col in str_cols:
+        # Create vertiliser
+        vectorizer = TfidfVectorizer()
+
+        # Get TF-IDF features of strings
+        tfidf_matrix = vectorizer.fit_transform(merged_df[col])
+
+        # get the features' names
+        feature_names = vectorizer.get_feature_names_out()
+
+        # Put tf-idf into the data frame
+        col_tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)
+
+        # Put tf-idf info into dataFrame
+        tfidf_df = pd.concat([tfidf_df, col_tfidf_df], axis=1)
+
+        numerical_df = pd.DataFrame()
+
+    # Merge the numerical columns of
+    for col in merged_df:
+        if col not in str_cols:
+            numerical_df[col] = merged_df[col]
+
+    tfidf_merged_df = pd.concat(numerical_df, tfidf_df)
+
+    return tfidf_merged_df
