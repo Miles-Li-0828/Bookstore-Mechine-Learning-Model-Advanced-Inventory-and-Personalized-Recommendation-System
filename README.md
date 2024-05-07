@@ -1,4 +1,4 @@
-# A Predictive Model for Bookstore Inventory Management: Book Rating Predictive System and Book Segmentation for Convenient Recommendation #
+# Machine Learning Models for Bookstore Inventory Management: Book Rating Predictive System and Segmented Book Recommendation System #
 
 ## Project Description
 --------
