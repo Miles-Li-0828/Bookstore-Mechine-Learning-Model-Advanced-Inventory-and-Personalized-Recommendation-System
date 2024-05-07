@@ -7,7 +7,7 @@ This project explores the application of machine learning techniques in revoluti
 
 The project begins with a comprehensive data preprocessing phase, addressing missing values, anomalies, and standardizing textual data. This ensures the dataset is clean, consistent, and ready for analysis. Subsequently, a decision tree prediction system is implemented to predict book ratings, enabling informed inventory management decisions.
 
-Additionally, K-Means clustering is employed for customer segmentation, facilitating tailored book recommendations based on customer preferences. Through feature selection, model training, and evaluation, the project demonstrates the transformative potential of machine learning in optimizing bookstore operations and enriching customer experiences.
+Additionally, K-Means clustering is employed for books segmentation, facilitating tailored book recommendations based on customer preferences. Through feature selection, model training, and evaluation, the project demonstrates the transformative potential of machine learning in optimizing bookstore operations and enriching customer experiences.
 
 # CODE IMPLEMENTATION #
 
@@ -99,9 +99,9 @@ This section details the implementation of a decision tree model for predicting 
 - **Cross Validation**: 
   - Ten-fold cross-validation for model validation and evaluation.
 
-#### 3. K-Means Clustering for Customer Segmentation
+#### 3. K-Means Clustering for Books Segmentation
 
-The following part of the notebook focuses on customer segmentation using K-means clustering. Key steps include:
+The following part of the notebook focuses on books segmentation using K-means clustering. Key steps include:
 
 - **Selection of K-means Clustering**: 
   - Choice of K-means due to its efficiency and clear cluster boundaries.
