@@ -1,8 +1,13 @@
 # A Predictive Model for Bookstore Inventory Management: Rating Predictive System and Customer Reading Segmentation #
 
-Descriptions
----------------
-This repository contains a Python file for data pre-processing of this project, a Jupyter Notebook which includes all the code implementation of our Machine Learning models and techniques. Pictures of visualisation of unprocessed or processed dataset. And raw data sets.
+### Project Description
+--------
+
+This project explores the application of machine learning techniques in revolutionizing bookstore management strategies and customer interactions. Leveraging data analysis and preprocessing, decision tree analysis, and K-Means clustering, the project aims to enhance decision-making processes and improve business management practices within the bookstore industry.
+
+The project begins with a comprehensive data preprocessing phase, addressing missing values, anomalies, and standardizing textual data. This ensures the dataset is clean, consistent, and ready for analysis. Subsequently, a decision tree prediction system is implemented to predict book ratings, enabling informed inventory management decisions.
+
+Additionally, K-Means clustering is employed for customer segmentation, facilitating tailored book recommendations based on customer preferences. Through feature selection, model training, and evaluation, the project demonstrates the transformative potential of machine learning in optimizing bookstore operations and enriching customer experiences.
 
 # CODE IMPLEMENTATION #
 
