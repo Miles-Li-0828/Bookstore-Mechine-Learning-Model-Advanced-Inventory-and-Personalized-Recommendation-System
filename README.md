@@ -1,6 +1,6 @@
 # A Predictive Model for Bookstore Inventory Management: Rating Predictive System and Customer Reading Segmentation #
 
-### Project Description
+## Project Description
 --------
 
 This project explores the application of machine learning techniques in revolutionizing bookstore management strategies and customer interactions. Leveraging data analysis and preprocessing, decision tree analysis, and K-Means clustering, the project aims to enhance decision-making processes and improve business management practices within the bookstore industry.
