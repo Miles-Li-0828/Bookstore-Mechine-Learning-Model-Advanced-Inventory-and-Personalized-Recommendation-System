@@ -9,6 +9,40 @@ The project begins with a comprehensive data preprocessing phase, addressing mis
 
 Additionally, K-Means clustering is employed for books segmentation, facilitating tailored book recommendations based on customer preferences. Through feature selection, model training, and evaluation, the project demonstrates the transformative potential of machine learning in optimizing bookstore operations and enriching customer experiences.
 
+## Report Description
+--------
+
+The project report, titled **"Machine Learning Techniques for Bookstore Inventory Management: Decision Trees for Book Rating Prediction and K-Means Clustering for Book Segmentation,"** provides a detailed analysis and documentation of the entire project. The report includes:
+
+1. **Abstraction**:
+   - Overview of the significance of machine learning in business decision-making, specifically in the context of a bookstore.
+   - Explanation of the methodologies used, including decision tree analysis and K-Means clustering, and their practical applications in predicting book ratings and segmenting books for customer recommendations.
+
+2. **Introduction**:
+   - Detailed introduction to the project objectives, highlighting the importance of data preprocessing in ensuring the quality and reliability of the dataset.
+   - Description of the decision tree and K-Means clustering techniques employed in the project.
+
+3. **Methodology**:
+   - Comprehensive explanation of the data preprocessing steps, including handling missing data, text processing, and data discretization.
+   - Detailed description of the decision tree prediction system, covering feature selection, data preparation, model training, cross-validation, and evaluation.
+   - Explanation of the K-Means clustering approach for book segmentation, including encoding of book titles, preprocessing, and determining the optimal number of clusters.
+
+4. **Data Exploration and Analysis**:
+   - Analysis of feature importance and distribution of ratings and rating categories.
+   - Examination of cluster composition and the impact of highly rated book filtering on recommendations.
+
+5. **Results**:
+   - Presentation of the decision tree model's accuracy and implications.
+   - Discussion of the clustering analysis results, highlighting the composition of clusters and the effectiveness of the recommendation strategy.
+
+6. **Limitations and Improvements**:
+   - Identification of limitations in data preprocessing and the decision tree model, along with potential improvements such as data augmentation, resampling techniques, and alternative modeling approaches.
+   - Suggestions for enhancing the clustering method by incorporating book content analysis and considering different encoding methods and clustering techniques.
+
+7. **Conclusion**:
+   - Summary of the study's findings, emphasizing the practical applications of machine learning in bookstore management.
+   - Recommendations for future advancements to address data imbalances, refine outlier management strategies, and explore innovative methodologies.
+
 # CODE IMPLEMENTATION #
 
 ### Preprocess.py
